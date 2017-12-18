@@ -5,12 +5,27 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 /**
  * Created by justiceo on 12/18/17.
  */
 
 public class RSSPullService extends IntentService {
+
+    private static String TAG = "RSSPullService";
+
+    // Defines a custom Intent action
+    public static final String BROADCAST_ACTION = "nyc.c4q.android.bookstore.BROADCAST";
+
+    // Defines the key for the status "extra" in an Intent
+    public static final String EXTENDED_DATA_STATUS = "nyc.c4q.android.bookstore.STATUS";
+
+    // This is for type-checking for android in the manifest.
+    public RSSPullService() {
+        super(null);
+    }
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -39,7 +54,21 @@ public class RSSPullService extends IntentService {
      */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        String url = intent.getDataString();
+        String data = intent.getDataString();
+        Log.d(TAG, "service has been started and is running. data: " + data);
+
+        // Simulate background work... like downloading the file via network
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Intent localIntent = new Intent(BROADCAST_ACTION);
+        // Puts the status into the Intent
+        localIntent.putExtra(EXTENDED_DATA_STATUS, data);
+        // Broadcasts the Intent to receivers in this app.
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
 }
