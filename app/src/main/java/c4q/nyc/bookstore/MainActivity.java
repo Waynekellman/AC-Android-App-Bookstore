@@ -10,16 +10,20 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    static String TAG = "MainActivity";
+    private static String TAG = "MainActivity";
+    protected MainActivity mainActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainActivity = this;
 
         // 1. Define the filter
         // The filter's action is BROADCAST_ACTION
@@ -58,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "onReceive fired");
-            String data = intent.getDataString();
-            Toast.makeText(MainActivity.this, "Done downloading", Toast.LENGTH_SHORT).show();
+            String data = intent.getStringExtra(RSSPullService.EXTENDED_DATA_STATUS);
+            Toast.makeText(MainActivity.this, "Download complete", Toast.LENGTH_SHORT).show();
+            TextView tv = mainActivity.findViewById(R.id.textView);
+            tv.setText("Last downloaded: " + data);
         }
     }
 }
